@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: kafka-0
+  namespace: kafka
+spec:
+  selector:
+    matchLabels:
+      app: kafka-0
+  serviceName: kafka-0
+  replicas: 1
+  updateStrategy:
+    type: RollingUpdate
+  podManagementPolicy: Parallel
+  template:
+    metadata:
+      labels:
+        app: kafka-0
+    spec:
+      containers:
+        - name: kafka-0
+          image: utr1903/kafka-0
+          ports:
+            - name: client
+              containerPort: 9092
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
+            limits:
+              cpu: 300m
+              memory: 600Mi
+          readinessProbe:
+            tcpSocket:
+              port: 9092
+            timeoutSeconds: 1
+          volumeMounts:
+            - name: data
+              mountPath: /kafka/logs
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 1Gi
