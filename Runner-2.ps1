@@ -1,4 +1,4 @@
-### Test Kafka server
+## Test Kafka server
 
 ## Zookeeper Server 0
 
@@ -30,3 +30,11 @@ kubectl exec kafka-0-0 -n kafka -it -- bash `
 
 # Consumer
 # bash kafka-console-consumer.sh --bootstrap-server kafka-0:9092 --topic first
+
+## Producer
+
+# Build
+docker build --tag utr1903/producer .\apps\producer\.
+
+# Run
+docker push utr1903/producer
