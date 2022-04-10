@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class KafkaController {
 
     @Autowired
-    KafkaService testService;
+    KafkaService kafkaService;
 
     @PostMapping
     public KafkaResponseDto publish(@RequestBody KafkaRequestDto requestDto)
     {
-        return testService.publish(requestDto);
+        return kafkaService.publish(requestDto);
     }
 }
