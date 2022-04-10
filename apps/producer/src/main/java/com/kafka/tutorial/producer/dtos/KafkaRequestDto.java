@@ -1,6 +1,6 @@
 package com.kafka.tutorial.producer.dtos;
 
-public class TestRequestDto {
+public class KafkaRequestDto {
 
     private String topic;
     private String value;

@@ -1,4 +1,4 @@
-package com.kafka.tutorial.producer.service.test;
+package com.kafka.tutorial.producer.service.kafka;
 
 public class PublishModel {
 

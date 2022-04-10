@@ -18,9 +18,7 @@ public class BaseResponseDto<T> {
         this.message = message;
     }
 
-    public String getMessage() {
-        return message;
-    }
+    public String getMessage() { return message; }
 
     public void setData(T data) { this.data = data; }
 

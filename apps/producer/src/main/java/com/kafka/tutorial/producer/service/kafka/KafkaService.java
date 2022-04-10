@@ -1,7 +1,7 @@
-package com.kafka.tutorial.producer.service.test;
+package com.kafka.tutorial.producer.service.kafka;
 
-import com.kafka.tutorial.producer.dtos.TestRequestDto;
-import com.kafka.tutorial.producer.dtos.TestResponseDto;
+import com.kafka.tutorial.producer.dtos.KafkaRequestDto;
+import com.kafka.tutorial.producer.dtos.KafkaResponseDto;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -12,20 +12,20 @@ import org.springframework.stereotype.Service;
 import java.util.Properties;
 
 @Service
-public class TestService {
+public class KafkaService {
 
     KafkaProducer<String, String> producer;
 
-    public TestService()
+    public KafkaService()
     {
         initializeKafkaProducer();
     }
 
-    public TestResponseDto publish(
-        TestRequestDto requestDto
+    public KafkaResponseDto publish(
+        KafkaRequestDto requestDto
     )
     {
-        TestResponseDto responseDto = new TestResponseDto();
+        KafkaResponseDto responseDto = new KafkaResponseDto();
 
         ProducerRecord<String, String> record =
                 new ProducerRecord<>(
