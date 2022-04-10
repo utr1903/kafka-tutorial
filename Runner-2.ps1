@@ -23,7 +23,7 @@ kubectl exec kafka-0-0 -n kafka -it -- bash `
     /kafka/bin/kafka-topics.sh `
     --bootstrap-server kafka-0:9092 `
     --create `
-    --topic first
+    --topic mytopic
 
 # Producer
 # bash kafka-console-producer.sh --bootstrap-server kafka-0:9092 --topic first

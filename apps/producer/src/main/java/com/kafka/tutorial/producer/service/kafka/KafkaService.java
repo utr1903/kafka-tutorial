@@ -29,8 +29,8 @@ public class KafkaService {
 
         ProducerRecord<String, String> record =
                 new ProducerRecord<>(
-                        requestDto.getTopic(),
-                        requestDto.getValue()
+                    requestDto.getTopic(),
+                    requestDto.getValue()
                 );
 
         PublishModel model = new PublishModel();
