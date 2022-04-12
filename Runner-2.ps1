@@ -43,7 +43,7 @@ while ($true) {
     Start-Sleep 2
 }
 
-Kafka
+# Kafka
 Write-Host "Deploying Kafka ..."
 
 kubectl apply -f .\infra\k8s\kafka
