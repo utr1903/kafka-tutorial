@@ -1,7 +1,8 @@
 package com.kafka.tutorial.producer.controller;
 
-import com.kafka.tutorial.producer.model.TestModel;
-import com.kafka.tutorial.producer.service.TestService;
+import com.kafka.tutorial.producer.dtos.KafkaRequestDto;
+import com.kafka.tutorial.producer.dtos.KafkaResponseDto;
+import com.kafka.tutorial.producer.service.kafka.KafkaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -10,18 +11,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("test")
-public class TestController {
+public class KafkaController {
 
     @Autowired
-    TestService testService;
+    KafkaService kafkaService;
 
     @PostMapping
-    public String publish(@RequestBody TestModel requestDto)
+    public KafkaResponseDto publish(@RequestBody KafkaRequestDto requestDto)
     {
-        String value = requestDto.getValue();
-        System.out.println(value);
-
-        String response = testService.publish(value);
-        return response;
+        return kafkaService.publish(requestDto);
     }
 }
