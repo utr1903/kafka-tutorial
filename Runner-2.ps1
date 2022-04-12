@@ -24,11 +24,20 @@ docker build --tag utr1903/producer .\apps\producer\.
 # Run
 docker push utr1903/producer
 
+## Consumer
+
+# Build
+docker build --tag utr1903/consumer .\apps\consumer\.
+
+# Run
+docker push utr1903/consumer
+
 ## K8s
 
 # Namespaces
 kubectl create ns kafka
 kubectl create ns prod
+kubectl create ns cons
 
 # Zookeeper
 
@@ -92,6 +101,23 @@ while ($true) {
 
     $producer = $(kubectl get pod -n prod -l app=producer -o json | ConvertFrom-Json)
     $isReady = $producer.items.status.containerStatuses[0].ready
+
+    if ($isReady) {
+        Write-Host "Pod ready!"
+        break;
+    }
+
+    Write-Host "Pod not ready yet."
+    Start-Sleep 2
+}
+
+Consumer
+
+kubectl apply -f .\infra\k8s\consumer
+while ($true) {
+
+    $consumer = $(kubectl get pod -n cons -l app=consumer -o json | ConvertFrom-Json)
+    $isReady = $consumer.items.status.containerStatuses[0].ready
 
     if ($isReady) {
         Write-Host "Pod ready!"
