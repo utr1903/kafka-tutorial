@@ -1,13 +1,13 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: kafka-0
+  name: kafka
   namespace: kafka
 spec:
   selector:
     matchLabels:
-      app: kafka-0
-  serviceName: kafka-0
+      app: kafka
+  serviceName: kafka
   replicas: 1
   updateStrategy:
     type: RollingUpdate
@@ -15,11 +15,12 @@ spec:
   template:
     metadata:
       labels:
-        app: kafka-0
+        app: kafka
     spec:
       containers:
-        - name: kafka-0
-          image: utr1903/kafka-0
+        - name: kafka
+          image: utr1903/kafka
+          command: [ "/kafka/bin/kafka-server-start.sh", "/etc/config/server.properties" ]
           ports:
             - name: client
               containerPort: 9092
@@ -37,6 +38,12 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /kafka/logs
+            - name: properties
+              mountPath: /etc/config
+      volumes:
+      - name: properties
+        configMap:
+          name: kafka
   volumeClaimTemplates:
     - metadata:
         name: data
