@@ -1,13 +1,13 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: zookeeper-0
+  name: zookeeper
   namespace: kafka
 spec:
   selector:
     matchLabels:
-      app: zookeeper-0
-  serviceName: zookeeper-0
+      app: zookeeper
+  serviceName: zookeeper
   replicas: 1
   updateStrategy:
     type: RollingUpdate
@@ -15,11 +15,12 @@ spec:
   template:
     metadata:
       labels:
-        app: zookeeper-0
+        app: zookeeper
     spec:
       containers:
-        - name: zookeeper-0
-          image: utr1903/zookeeper-0
+        - name: zookeeper
+          image: utr1903/zookeeper
+          command: [ "/kafka/bin/zookeeper-server-start.sh", "/etc/config/zookeeper.properties" ]
           ports:
             - name: client
               containerPort: 2181
@@ -33,6 +34,12 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /kafka/logs
+            - name: properties
+              mountPath: /etc/config
+      volumes:
+      - name: properties
+        configMap:
+          name: zookeeper
   volumeClaimTemplates:
     - metadata:
         name: data
