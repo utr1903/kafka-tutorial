@@ -8,13 +8,16 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
-import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 
 @Service
 public class KafkaListener {
 
-    KafkaConsumer<String, String> consumer;
+    private static final String TOPIC = "mytopic";
+    private static final String GROUP_ID = "mygroup";
+
+    private KafkaConsumer<String, String> consumer;
 
     public KafkaListener()
     {
@@ -25,8 +28,9 @@ public class KafkaListener {
     {
         try
         {
-            consumer = new KafkaConsumer<>(setProperties());
-            consumer.subscribe(Arrays.asList("mytopic"));
+            createConsumer();
+
+            subscribeToTopic();
 
             System.out.println("Starting to poll ...");
 
@@ -42,11 +46,20 @@ public class KafkaListener {
                 }
             }
         }
-        finally {
-            System.out.println("Closing consumer ...");
-            consumer.close();
-            System.out.println("Consumer closed.");
+        finally
+        {
+            closeConsumer();
         }
+    }
+
+    private void createConsumer()
+    {
+        System.out.println("Creating Kafka consumer ...");
+
+        Properties properties = setProperties();
+        consumer = new KafkaConsumer<>(properties);
+
+        System.out.println(" -> Kafka consumer is created.");
     }
 
     private Properties setProperties()
@@ -55,9 +68,25 @@ public class KafkaListener {
         properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "kafka-0.kafka.svc.cluster.local:9092");
         properties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringSerializer.class.getCanonicalName());
         properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringSerializer.class.getCanonicalName());
-        properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, "mygroup");
+        properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, GROUP_ID);
         properties.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
 
         return properties;
+    }
+
+    private void subscribeToTopic()
+    {
+        System.out.println("Subscribing to topic" + TOPIC + "...");
+
+        consumer.subscribe(List.of(TOPIC));
+
+        System.out.println(" -> Topic is subscribed.");
+    }
+
+    private void closeConsumer()
+    {
+        System.out.println("Closing consumer ...");
+        consumer.close();
+        System.out.println("Consumer closed.");
     }
 }
