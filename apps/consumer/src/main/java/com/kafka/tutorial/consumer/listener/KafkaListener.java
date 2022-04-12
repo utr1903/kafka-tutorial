@@ -65,7 +65,7 @@ public class KafkaListener {
     private Properties setProperties()
     {
         Properties properties = new Properties();
-        properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "kafka-0.kafka.svc.cluster.local:9092");
+        properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "kafka.kafka.svc.cluster.local:9092");
         properties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringSerializer.class.getCanonicalName());
         properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringSerializer.class.getCanonicalName());
         properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, GROUP_ID);
