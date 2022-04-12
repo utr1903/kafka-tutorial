@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: zookeeper
+  namespace: kafka
+data:
+  zookeeper.properties: |
+    dataDir=/kafka/logs
+    clientPort=2181
+    maxClientCnxns=0
+    admin.enableServer=false
+    # admin.serverPort=8080
