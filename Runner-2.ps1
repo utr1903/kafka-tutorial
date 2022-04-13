@@ -1,35 +1,21 @@
-## Test Kafka server
+### Test Kafka server
 
-## Zookeeper Server 0
+## Build & Push
 
-# Build
-docker build --tag utr1903/zookeeper-0 .\zookeeper-0\.
+# Zookeeper Server
+docker build --tag utr1903/zookeeper .\apps\kafka\zookeeper\.
+docker push utr1903/zookeeper
 
-# Run
-docker push utr1903/zookeeper-0
+# Kafka Server
+docker build --tag utr1903/kafka .\apps\kafka\kafka\.
+docker push utr1903/kafka
 
-## Kafka Server 0
-
-# Build
-docker build --tag utr1903/kafka-0 .\kafka-0\.
-
-# Run
-docker push utr1903/kafka-0
-
-## Producer
-
-# Build
+# Producer
 docker build --tag utr1903/producer .\apps\producer\.
-
-# Run
 docker push utr1903/producer
 
-## Consumer
-
-# Build
+# Consumer
 docker build --tag utr1903/consumer .\apps\consumer\.
-
-# Run
 docker push utr1903/consumer
 
 ## K8s
@@ -40,11 +26,12 @@ kubectl create ns prod
 kubectl create ns cons
 
 # Zookeeper
+Write-Host "Deploying Zookeeper ..."
 
 kubectl apply -f .\infra\k8s\zookeeper
 while ($true) {
 
-    $zookeeper = $(kubectl get pod -n kafka -l app=zookeeper-0 -o json | ConvertFrom-Json)
+    $zookeeper = $(kubectl get pod -n kafka -l app=zookeeper -o json | ConvertFrom-Json)
     $isReady = $zookeeper.items.status.containerStatuses[0].ready
 
     if ($isReady) {
@@ -57,11 +44,12 @@ while ($true) {
 }
 
 # Kafka
+Write-Host "Deploying Kafka ..."
 
 kubectl apply -f .\infra\k8s\kafka
 while ($true) {
 
-    $kafka = $(kubectl get pod -n kafka -l app=kafka-0 -o json | ConvertFrom-Json)
+    $kafka = $(kubectl get pod -n kafka -l app=kafka -o json | ConvertFrom-Json)
     $isReady = $kafka.items.status.containerStatuses[0].ready
 
     if ($isReady) {
@@ -73,12 +61,10 @@ while ($true) {
     Start-Sleep 2
 }
 
-## Topic
-
-# Create
-kubectl exec kafka-0-0 -n kafka -it -- bash `
+# Topic
+kubectl exec kafka-0 -n kafka -it -- bash `
     /kafka/bin/kafka-topics.sh `
-    --bootstrap-server kafka-0:9092 `
+    --bootstrap-server kafka:9092 `
     --create `
     --topic mytopic
 
@@ -95,6 +81,7 @@ kubectl exec kafka-0-0 -n kafka -it -- bash `
 #     --topic first
 
 # Producer
+Write-Host "Deploying Producer  ..."
 
 kubectl apply -f .\infra\k8s\producer
 while ($true) {
@@ -111,7 +98,8 @@ while ($true) {
     Start-Sleep 2
 }
 
-Consumer
+# Consumer
+Write-Host "Deploying Consumer ..."
 
 kubectl apply -f .\infra\k8s\consumer
 while ($true) {
