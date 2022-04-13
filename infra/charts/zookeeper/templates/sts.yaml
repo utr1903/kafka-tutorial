@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: "{{ .Values.name }}"
+  namespace: "{{ .Values.namespace }}"
+spec:
+  selector:
+    matchLabels:
+      app: "{{ .Values.name }}"
+  serviceName: "{{ .Values.name }}"
+  replicas: 1
+  updateStrategy:
+    type: RollingUpdate
+  podManagementPolicy: Parallel
+  template:
+    metadata:
+      labels:
+        app: "{{ .Values.name }}"
+    spec:
+      containers:
+        - name: "{{ .Values.name }}"
+          image: utr1903/"{{ .Values.name }}"
+          command:
+            [
+              "/kafka/bin/zookeeper-server-start.sh",
+              "/etc/config/zookeeper.properties",
+            ]
+          ports:
+            - name: client
+              containerPort: 2181
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
+            limits:
+              cpu: 200m
+              memory: 200Mi
+          volumeMounts:
+            - name: data
+              mountPath: /kafka/logs
+            - name: properties
+              mountPath: /etc/config
+      volumes:
+        - name: properties
+          configMap:
+            name: "{{ .Values.name }}"
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 1Gi
