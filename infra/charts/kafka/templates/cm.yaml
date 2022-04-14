@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: "{{ .Values.name }}"
-  namespace: "{{ .Values.namespace }}"
+  name: {{ .Values.name }}
+  namespace: {{ .Values.namespace }}
 data:
   server.properties: |
-    broker.id="{{ .Values.brokerId }}"
+    broker.id=###BROKER_ID###
 
     num.network.threads=3
     num.io.threads=8
@@ -32,7 +32,7 @@ data:
     log.segment.bytes=1073741824
     log.retention.check.interval.ms=300000
 
-    zookeeper.connect="{{ .Values.zookeeper.name }}":"{{ .Values.zookeeper.clientPort }}"
+    zookeeper.connect={{ .Values.zookeeper.name }}:{{ .Values.zookeeper.clientPort }}
     zookeeper.connection.timeout.ms=18000
 
     group.initial.rebalance.delay.ms=0

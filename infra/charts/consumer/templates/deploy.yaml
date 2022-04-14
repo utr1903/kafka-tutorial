@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: "{{ .Values.name }}"
-  namespace: "{{ .Values.namespace }}"
+  name: {{ .Values.name }}
+  namespace: {{ .Values.namespace }}
 spec:
   selector:
     matchLabels:
-      app: "{{ .Values.name }}"
+      app: {{ .Values.name }}
   template:
     metadata:
       labels:
-        app: "{{ .Values.name }}"
+        app: {{ .Values.name }}
     spec:
       containers:
-        - name: "{{ .Values.name }}"
-          image: utr1903/"{{ .Values.name }}"
+        - name: {{ .Values.name }}
+          image: "utr1903/{{ .Values.name }}"
           ports:
             - protocol: TCP
-              containerPort: "{{ .Values.port }}"
+              containerPort: {{ .Values.port }}
           resources:
             requests:
               cpu: 100m

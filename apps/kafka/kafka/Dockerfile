@@ -11,3 +11,9 @@ RUN  mkdir /tmp/kafka && \
     -o /tmp/kafka/kafka.tgz && \
     mkdir /kafka && cd /kafka && \
     tar -xvzf /tmp/kafka/kafka.tgz --strip 1
+
+RUN mkdir runner
+
+COPY runner.sh /runner
+
+RUN chmod +x /runner/runner.sh
