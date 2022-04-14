@@ -1,0 +1,3 @@
+name: zookeeper
+namespace: kafka
+clientPort: 2181

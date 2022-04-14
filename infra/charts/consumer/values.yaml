@@ -1,0 +1,3 @@
+name: consumer
+namespace: cons
+port: 8080

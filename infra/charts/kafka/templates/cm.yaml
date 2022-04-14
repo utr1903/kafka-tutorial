@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: kafka
-  namespace: kafka
+  name: "{{ .Values.name }}"
+  namespace: "{{ .Values.namespace }}"
 data:
   server.properties: |
-    broker.id=0
+    broker.id="{{ .Values.brokerId }}"
 
     num.network.threads=3
     num.io.threads=8
@@ -32,7 +32,7 @@ data:
     log.segment.bytes=1073741824
     log.retention.check.interval.ms=300000
 
-    zookeeper.connect=zookeeper:2181
+    zookeeper.connect="{{ .Values.zookeeper.name }}":"{{ .Values.zookeeper.clientPort }}"
     zookeeper.connection.timeout.ms=18000
 
     group.initial.rebalance.delay.ms=0

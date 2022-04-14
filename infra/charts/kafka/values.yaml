@@ -1,0 +1,7 @@
+name: kafka
+namespace: kafka
+clientPort: 9092
+
+zookeeper:
+  name: zookeeper
+  clientPort: 2181

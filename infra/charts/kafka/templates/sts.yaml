@@ -1,13 +1,13 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: kafka
-  namespace: kafka
+  name: "{{ .Values.name }}"
+  namespace: "{{ .Values.namespace }}"
 spec:
   selector:
     matchLabels:
-      app: kafka
-  serviceName: kafka
+      app: "{{ .Values.name }}"
+  serviceName: "{{ .Values.name }}"
   replicas: 1
   updateStrategy:
     type: RollingUpdate
@@ -15,15 +15,19 @@ spec:
   template:
     metadata:
       labels:
-        app: kafka
+        app: "{{ .Values.name }}"
     spec:
       containers:
-        - name: kafka
-          image: utr1903/kafka
-          command: [ "/kafka/bin/kafka-server-start.sh", "/etc/config/server.properties" ]
+        - name: "{{ .Values.name }}"
+          image: utr1903/"{{ .Values.name }}"
+          command:
+            [
+              "/kafka/bin/kafka-server-start.sh",
+              "/etc/config/server.properties",
+            ]
           ports:
             - name: client
-              containerPort: 9092
+              containerPort: "{{ .Values.clientPort }}"
           resources:
             requests:
               cpu: 100m
@@ -33,7 +37,7 @@ spec:
               memory: 600Mi
           readinessProbe:
             tcpSocket:
-              port: 9092
+              port: "{{ .Values.clientPort }}"
             timeoutSeconds: 1
           volumeMounts:
             - name: data
@@ -41,9 +45,9 @@ spec:
             - name: properties
               mountPath: /etc/config
       volumes:
-      - name: properties
-        configMap:
-          name: kafka
+        - name: properties
+          configMap:
+            name: "{{ .Values.name }}"
   volumeClaimTemplates:
     - metadata:
         name: data
