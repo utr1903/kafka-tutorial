@@ -1,4 +1,4 @@
-apiVersion: autoscaling/v1
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{ .Values.name }}
@@ -10,4 +10,4 @@ spec:
   minReplicas: {{ .Values.hpa.minReplicas }}
   maxReplicas: {{ .Values.hpa.maxReplicas }}
   metrics:
-  {{ toYaml .Values.hpa.metrics | nindent 4 }}
+    {{ toYaml .Values.hpa.metrics | nindent 4 }}
