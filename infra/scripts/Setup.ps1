@@ -80,16 +80,16 @@ while ($true) {
             | ConvertFrom-Json).items.status.containerStatuses[0].ready
     }
     catch {
-        Write-Host "Creating container ..."
+        Write-Host " -> Creating container ..."
         Start-Sleep 2
     }
 
     if ($isReady) {
-        Write-Host "Pod ready!`n"
+        Write-Host " -> Pod ready!`n"
         break;
     }
 
-    Write-Host "Pod not ready yet ..."
+    Write-Host " -> Pod not ready yet ..."
     Start-Sleep 2
 }
 
@@ -109,38 +109,53 @@ while ($true) {
             | ConvertFrom-Json).items.status.containerStatuses[0].ready
     }
     catch {
-        Write-Host "Creating container ..."
+        Write-Host " -> Creating container ..."
         Start-Sleep 2
     }
 
     if ($isReady) {
-        Write-Host "Pod ready!`n"
+        Write-Host " -> Pod ready!`n"
         break;
     }
 
-    Write-Host "Pod not ready yet ..."
+    Write-Host " -> Pod not ready yet ..."
     Start-Sleep 2
 }
 
 # Topic
-Write-Host "Creating topic [mytopic] ..."
+Write-Host "Checking topic [mytopic] ..."
 
-while ($true) {
-    $result = $(kubectl exec -n "$($kafka.namespace)" "$($kafka.name)-0" -it -- bash `
+$mytopic = $(kubectl exec -n "$($kafka.namespace)" "$($kafka.name)-0" -it -- bash `
+        /kafka/bin/kafka-topics.sh `
+        --bootstrap-server "$($kafka.name).$($kafka.namespace).svc.cluster.local:$($kafka.port)" `
+        --list `
+    | Select-String -Pattern "mytopic")
+
+if (!$mytopic) {
+
+    Write-Host " -> Topic does not exist. Creating ..."
+    while ($true) {
+
+        ($isCreated = kubectl exec -n "$($kafka.namespace)" "$($kafka.name)-0" -it -- bash `
             /kafka/bin/kafka-topics.sh `
             --bootstrap-server "$($kafka.name).$($kafka.namespace).svc.cluster.local:$($kafka.port)" `
             --create `
-            --topic mytopic `
-            >$null 2>&1)
+            --topic mytopic)
+        2> $null 
 
-    if (!$result) {
-        Write-Host "Kafka pods are not fully ready yet. Waiting ..."
-        Start-Sleep 2
-        continue
+        if (!$isCreated) {
+            Write-Host " -> Kafka pods are not fully ready yet. Waiting ..."
+            Start-Sleep 2
+            continue
+        }
+
+        Write-Host " -> Topic is created successfully.`n"
+        break
     }
 
-    Write-Host "Topic is created successfully.`n"
-    break
+}
+else {
+    Write-Host " -> Topic already exists.`n"
 }
 
 # # Producer
@@ -171,16 +186,16 @@ while ($true) {
             | ConvertFrom-Json).items.status.containerStatuses[0].ready   
     }
     catch {
-        Write-Host "Creating container ..."
+        Write-Host " -> Creating container ..."
         Start-Sleep 2
     }
 
     if ($isReady) {
-        Write-Host "Pod ready!`n"
+        Write-Host " -> Pod ready!`n"
         break;
     }
 
-    Write-Host "Pod not ready yet ..."
+    Write-Host " -> Pod not ready yet ..."
     Start-Sleep 2
 }
 
@@ -200,15 +215,15 @@ while ($true) {
             | ConvertFrom-Json).items.status.containerStatuses[0].ready
     }
     catch {
-        Write-Host "Creating container ..."
+        Write-Host " -> Creating container ..."
         Start-Sleep 2
     }
 
     if ($isReady) {
-        Write-Host "Pod ready!`n"
+        Write-Host " -> Pod ready!`n"
         break;
     }
 
-    Write-Host "Pod not ready yet ..."
+    Write-Host " -> Pod not ready yet ..."
     Start-Sleep 2
 }
