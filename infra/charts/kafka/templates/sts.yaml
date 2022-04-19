@@ -8,7 +8,7 @@ spec:
     matchLabels:
       app: {{ .Values.name }}
   serviceName: {{ .Values.name }}
-  replicas: 1
+  replicas: 3
   updateStrategy:
     type: RollingUpdate
   podManagementPolicy: Parallel
