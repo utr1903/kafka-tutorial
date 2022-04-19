@@ -1,33 +1,36 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: "{{ .Values.name }}"
-  namespace: "{{ .Values.namespace }}"
+  name: {{ .Values.name }}
+  namespace: {{ .Values.namespace }}
 spec:
   selector:
     matchLabels:
-      app: "{{ .Values.name }}"
-  serviceName: "{{ .Values.name }}"
-  replicas: 1
+      app: {{ .Values.name }}
+  serviceName: {{ .Values.name }}
+  replicas: 3
   updateStrategy:
     type: RollingUpdate
   podManagementPolicy: Parallel
   template:
     metadata:
       labels:
-        app: "{{ .Values.name }}"
+        app: {{ .Values.name }}
     spec:
       containers:
-        - name: "{{ .Values.name }}"
-          image: utr1903/"{{ .Values.name }}"
-          command:
-            [
-              "/kafka/bin/kafka-server-start.sh",
-              "/etc/config/server.properties",
-            ]
+        - name: {{ .Values.name }}
+          image: "utr1903/{{ .Values.name }}"
+          command: ["/runner/runner.sh"]
+          env:
+          - name: STS_NAME
+            value: {{ .Values.name }}
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
           ports:
             - name: client
-              containerPort: "{{ .Values.clientPort }}"
+              containerPort: {{ .Values.clientPort }}
           resources:
             requests:
               cpu: 100m
@@ -37,17 +40,11 @@ spec:
               memory: 600Mi
           readinessProbe:
             tcpSocket:
-              port: "{{ .Values.clientPort }}"
+              port: {{ .Values.clientPort }}
             timeoutSeconds: 1
           volumeMounts:
             - name: data
               mountPath: /kafka/logs
-            - name: properties
-              mountPath: /etc/config
-      volumes:
-        - name: properties
-          configMap:
-            name: "{{ .Values.name }}"
   volumeClaimTemplates:
     - metadata:
         name: data

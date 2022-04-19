@@ -11,3 +11,12 @@ RUN  mkdir /tmp/kafka && \
     -o /tmp/kafka/kafka.tgz && \
     mkdir /kafka && cd /kafka && \
     tar -xvzf /tmp/kafka/kafka.tgz --strip 1
+
+# Copy files
+RUN mkdir runner
+COPY runner.sh /runner
+COPY zookeeper.properties /runner
+
+# Give necessary rights to files
+RUN chmod +w /runner/zookeeper.properties
+RUN chmod +x /runner/runner.sh

@@ -8,7 +8,7 @@ metadata:
 spec:
   clusterIP: None
   ports:
-    - port: "{{ .Values.clientPort }}"
+    - port: {{ .Values.clientPort }}
       targetPort: http
       protocol: TCP
       name: http

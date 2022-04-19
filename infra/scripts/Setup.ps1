@@ -6,16 +6,16 @@
 
 # Zookeeper
 $zookeeper = @{
-    name       = "zookeeper"
-    namespace  = "kafka"
-    clientPort = 2181
+    name      = "zookeeper"
+    namespace = "kafka"
+    port      = 2181
 }
 
 # Kafka
 $kafka = @{
-    name       = "kafka"
-    namespace  = "kafka"
-    clientPort = 9092
+    name      = "kafka"
+    namespace = "kafka"
+    port      = 9092
 }
 
 # Producer
@@ -27,9 +27,9 @@ $producer = @{
 
 # Consumer
 $consumer = @{
-    name       = "consumer"
-    namespace  = "cons"
-    clientPort = 8080
+    name      = "consumer"
+    namespace = "cons"
+    port      = 8080
 }
 
 ####################
@@ -37,20 +37,28 @@ $consumer = @{
 ####################
 
 # Zookeeper
+Write-Host "`n--- ZOOKEEPER ---`n"
 docker build --tag "utr1903/$($zookeeper.name)" ..\..\apps\kafka\zookeeper\.
 docker push "utr1903/$($zookeeper.name)"
+Write-Host "`n------`n"
 
 # Kafka
+Write-Host "`n--- KAFKA ---`n"
 docker build --tag "utr1903/$($kafka.name)" ..\..\apps\kafka\kafka\.
 docker push "utr1903/$($kafka.name)"
+Write-Host "`n------`n"
 
 # Producer
+Write-Host "`n--- PRODUCER ---`n"
 docker build --tag "utr1903/$($producer.name)" ..\..\apps\producer\.
 docker push "utr1903/$($producer.name)"
+Write-Host "`n------`n"
 
 # Consumer
+Write-Host "`n--- CONSUMER ---`n"
 docker build --tag "utr1903/$($consumer.name)" ..\..\apps\consumer\.
 docker push "utr1903/$($consumer.name)"
+Write-Host "`n------`n"
 
 ############
 ### Helm ###
@@ -59,14 +67,25 @@ docker push "utr1903/$($consumer.name)"
 # Zookeeper
 Write-Host "Deploying Zookeeper ..."
 
-helm upgrade -f ..\charts\zookeeper
+helm upgrade $($zookeeper.name) `
+    --install `
+    --create-namespace `
+    --namespace $($zookeeper.namespace) `
+    ..\charts\zookeeper
+
 while ($true) {
 
-    $isReady = $(kubectl get pod -n "$($zookeeper.namespace)" -l "app=$($zookeeper.name)" -o json `
-        | ConvertFrom-Json).items.status.containerStatuses[0].ready
+    try {
+        $isReady = $(kubectl get pod -n "$($zookeeper.namespace)" -l "app=$($zookeeper.name)" -o json `
+            | ConvertFrom-Json).items.status.containerStatuses[0].ready
+    }
+    catch {
+        Write-Host "Creating container ..."
+        Start-Sleep 2
+    }
 
     if ($isReady) {
-        Write-Host "Pod ready!"
+        Write-Host "Pod ready!`n"
         break;
     }
 
@@ -77,14 +96,25 @@ while ($true) {
 # Kafka
 Write-Host "Deploying Kafka ..."
 
-helm upgrade -f ..\charts\kafka
+helm upgrade $($kafka.name) `
+    --install `
+    --create-namespace `
+    --namespace $($kafka.namespace) `
+    ..\charts\kafka
+
 while ($true) {
 
-    $isReady = $(kubectl get pod -n "$($kafka.namespace)" -l "app=$($kafka.name)" -o json `
-        | ConvertFrom-Json).items.status.containerStatuses[0].ready
+    try {
+        $isReady = $(kubectl get pod -n "$($kafka.namespace)" -l "app=$($kafka.name)" -o json `
+            | ConvertFrom-Json).items.status.containerStatuses[0].ready
+    }
+    catch {
+        Write-Host "Creating container ..."
+        Start-Sleep 2
+    }
 
     if ($isReady) {
-        Write-Host "Pod ready!"
+        Write-Host "Pod ready!`n"
         break;
     }
 
@@ -93,9 +123,9 @@ while ($true) {
 }
 
 # Topic
-kubectl exec kafka-0 -n kafka -it -- bash `
+kubectl exec -n "$($kafka.namespace)" "$($kafka.name)-0" -it -- bash `
     /kafka/bin/kafka-topics.sh `
-    --bootstrap-server kafka:9092 `
+    --bootstrap-server $($kafka.name):$($kafka.port) `
     --create `
     --topic mytopic
 
@@ -114,14 +144,25 @@ kubectl exec kafka-0 -n kafka -it -- bash `
 # Producer
 Write-Host "Deploying Producer  ..."
 
-helm upgrade -f ..\charts\producer
+helm upgrade $($producer.name) `
+    --install `
+    --create-namespace `
+    --namespace $($producer.namespace) `
+    ..\charts\producer
+
 while ($true) {
 
-    $isReady = $(kubectl get pod -n "$($producer.namespace)" -l "app=$($producer.name)" -o json `
-        | ConvertFrom-Json).items.status.containerStatuses[0].ready
+    try {
+        $isReady = $(kubectl get pod -n "$($producer.namespace)" -l "app=$($producer.name)" -o json `
+            | ConvertFrom-Json).items.status.containerStatuses[0].ready   
+    }
+    catch {
+        Write-Host "Creating container ..."
+        Start-Sleep 2
+    }
 
     if ($isReady) {
-        Write-Host "Pod ready!"
+        Write-Host "Pod ready!`n"
         break;
     }
 
@@ -132,14 +173,25 @@ while ($true) {
 # Consumer
 Write-Host "Deploying Consumer ..."
 
-helm upgrade -f ..\charts\producer
+helm upgrade $($consumer.name) `
+    --install `
+    --create-namespace `
+    --namespace $($consumer.namespace) `
+    ..\charts\consumer
+
 while ($true) {
 
-    $isReady = $(kubectl get pod -n "$($consumer.namespace)" -l "app=$($consumer.name)" -o json `
-        | ConvertFrom-Json).items.status.containerStatuses[0].ready
+    try {
+        $isReady = $(kubectl get pod -n "$($consumer.namespace)" -l "app=$($consumer.name)" -o json `
+            | ConvertFrom-Json).items.status.containerStatuses[0].ready
+    }
+    catch {
+        Write-Host "Creating container ..."
+        Start-Sleep 2
+    }
 
     if ($isReady) {
-        Write-Host "Pod ready!"
+        Write-Host "Pod ready!`n"
         break;
     }
 
