@@ -123,11 +123,25 @@ while ($true) {
 }
 
 # Topic
-kubectl exec -n "$($kafka.namespace)" "$($kafka.name)-0" -it -- bash `
-    /kafka/bin/kafka-topics.sh `
-    --bootstrap-server $($kafka.name):$($kafka.port) `
-    --create `
-    --topic mytopic
+Write-Host "Creating topic [mytopic] ..."
+
+while ($true) {
+    $result = $(kubectl exec -n "$($kafka.namespace)" "$($kafka.name)-0" -it -- bash `
+            /kafka/bin/kafka-topics.sh `
+            --bootstrap-server "$($kafka.name).$($kafka.namespace).svc.cluster.local:$($kafka.port)" `
+            --create `
+            --topic mytopic `
+            >$null 2>&1)
+
+    if (!$result) {
+        Write-Host "Kafka pods are not fully ready yet. Waiting ..."
+        Start-Sleep 2
+        continue
+    }
+
+    Write-Host "Topic is created successfully.`n"
+    break
+}
 
 # # Producer
 # kubectl exec kafka-0-0 -n kafka -it -- bash `
