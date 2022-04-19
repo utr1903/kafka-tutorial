@@ -18,10 +18,10 @@ spec:
           ports:
             - protocol: TCP
               containerPort: {{ .Values.port }}
-          resources:
-            requests:
-              cpu: 100m
-              memory: 100Mi
-            limits:
-              cpu: 200m
-              memory: 200Mi
+          # resources:
+          #   requests:
+          #     cpu: 100m
+          #     memory: 100Mi
+          #   limits:
+          #     cpu: 200m
+          #     memory: 200Mi
