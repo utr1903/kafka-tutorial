@@ -21,6 +21,13 @@ spec:
         - name: {{ .Values.name }}
           image: "utr1903/{{ .Values.name }}"
           command: ["/runner/runner.sh"]
+          env:
+          - name: STS_NAME
+            value: {{ .Values.name }}
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
           ports:
             - name: client
               containerPort: {{ .Values.clientPort }}
@@ -38,12 +45,6 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /kafka/logs
-            - name: properties
-              mountPath: /etc/config
-      volumes:
-        - name: properties
-          configMap:
-            name: {{ .Values.name }}
   volumeClaimTemplates:
     - metadata:
         name: data

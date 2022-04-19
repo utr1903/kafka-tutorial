@@ -36,21 +36,29 @@ $consumer = @{
 ### Build & Push ###
 ####################
 
-# # Zookeeper
-# docker build --tag "utr1903/$($zookeeper.name)" ..\..\apps\kafka\zookeeper\.
-# docker push "utr1903/$($zookeeper.name)"
+# Zookeeper
+Write-Host "`n--- ZOOKEEPER ---`n"
+docker build --tag "utr1903/$($zookeeper.name)" ..\..\apps\kafka\zookeeper\.
+docker push "utr1903/$($zookeeper.name)"
+Write-Host "`n------`n"
 
-# # Kafka
-# docker build --tag "utr1903/$($kafka.name)" ..\..\apps\kafka\kafka\.
-# docker push "utr1903/$($kafka.name)"
+# Kafka
+Write-Host "`n--- KAFKA ---`n"
+docker build --tag "utr1903/$($kafka.name)" ..\..\apps\kafka\kafka\.
+docker push "utr1903/$($kafka.name)"
+Write-Host "`n------`n"
 
-# # Producer
-# docker build --tag "utr1903/$($producer.name)" ..\..\apps\producer\.
-# docker push "utr1903/$($producer.name)"
+# Producer
+Write-Host "`n--- PRODUCER ---`n"
+docker build --tag "utr1903/$($producer.name)" ..\..\apps\producer\.
+docker push "utr1903/$($producer.name)"
+Write-Host "`n------`n"
 
-# # Consumer
-# docker build --tag "utr1903/$($consumer.name)" ..\..\apps\consumer\.
-# docker push "utr1903/$($consumer.name)"
+# Consumer
+Write-Host "`n--- CONSUMER ---`n"
+docker build --tag "utr1903/$($consumer.name)" ..\..\apps\consumer\.
+docker push "utr1903/$($consumer.name)"
+Write-Host "`n------`n"
 
 ############
 ### Helm ###
