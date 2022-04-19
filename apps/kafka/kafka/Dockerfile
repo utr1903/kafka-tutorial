@@ -20,6 +20,6 @@ RUN mkdir runner
 COPY runner.sh /runner
 COPY server.properties /runner
 
-# Give necessary rights to files
-RUN chmod +w /runner/server.properties
-RUN chmod +x /runner/runner.sh
+# Trim CRLF to LF
+RUN sed -i s/"\\r"/""/g /runner/runner.sh
+RUN sed -i s/"\\r"/""/g /runner/server.properties
