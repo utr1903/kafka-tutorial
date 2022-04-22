@@ -64,11 +64,37 @@ Write-Host "`n------`n"
 ### Helm ###
 ############
 
+# Newrelic
+Write-Host "Deploying Newrelic ..."
+
+kubectl apply -f https://download.newrelic.com/install/kubernetes/pixie/latest/px.dev_viziers.yaml && `
+    kubectl apply -f https://download.newrelic.com/install/kubernetes/pixie/latest/olm_crd.yaml && `
+    helm repo add newrelic https://helm-charts.newrelic.com && helm repo update && `
+    kubectl create namespace newrelic ; helm upgrade --install newrelic-bundle newrelic/nri-bundle `
+    --wait `
+    --debug `
+    --set global.licenseKey=$env:NEWRELIC_LICENSE_KEY `
+    --set global.cluster=$kafka.name `
+    --namespace=newrelic `
+    --set newrelic-infrastructure.privileged=true `
+    --set global.lowDataMode=true `
+    --set ksm.enabled=true `
+    --set kubeEvents.enabled=true `
+    --set prometheus.enabled=true `
+    --set logging.enabled=true `
+    --set newrelic-pixie.enabled=true `
+    --set newrelic-pixie.apiKey=$env:PIXIE_API_KEY `
+    --set pixie-chart.enabled=true `
+    --set pixie-chart.deployKey=$env:PIXIE_DEPLOY_KEY `
+    --set pixie-chart.clusterName=$kafka.name
+
 # Zookeeper
 Write-Host "Deploying Zookeeper ..."
 
 helm upgrade $($zookeeper.name) `
     --install `
+    --wait `
+    --debug `
     --create-namespace `
     --namespace $($zookeeper.namespace) `
     ..\charts\zookeeper
@@ -98,6 +124,8 @@ Write-Host "Deploying Kafka ..."
 
 helm upgrade $($kafka.name) `
     --install `
+    --wait `
+    --debug `
     --create-namespace `
     --namespace $($kafka.namespace) `
     ..\charts\kafka
@@ -175,6 +203,8 @@ Write-Host "Deploying Producer  ..."
 
 helm upgrade $($producer.name) `
     --install `
+    --wait `
+    --debug `
     --create-namespace `
     --namespace $($producer.namespace) `
     ..\charts\producer
@@ -204,6 +234,8 @@ Write-Host "Deploying Consumer ..."
 
 helm upgrade $($consumer.name) `
     --install `
+    --wait `
+    --debug `
     --create-namespace `
     --namespace $($consumer.namespace) `
     ..\charts\consumer
