@@ -13,6 +13,8 @@ stageLong="dev"
 stageShort="d"
 instance="001"
 
+kubernetesVersion="1.23.5"
+
 ### Variables
 resourceGroupName="rg-$program-$locationShort-$project-$stageShort-$instance"
 aksName="aks-$program-$locationShort-$project-$stageShort-$instance"
@@ -55,6 +57,8 @@ if [[ $aks == "" ]]; then
         --resource-group $resourceGroupName \
         --name $aksName \
         --location $locationLong \
+        --kubernetes-version $kubernetesVersion \
+        --node-count 1 \
         --generate-ssh-keys \
         2> /dev/null \
         | jq)
