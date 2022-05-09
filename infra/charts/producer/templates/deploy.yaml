@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: {{ .Values.name }}
-          image: "utr1903/{{ .Values.name }}"
+          image: "{{ .Values.dockerhubName }}/{{ .Values.name }}"
           ports:
             - protocol: TCP
               containerPort: {{ .Values.port }}
