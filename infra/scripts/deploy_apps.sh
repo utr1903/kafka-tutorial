@@ -83,6 +83,30 @@ kubectl apply -f https://download.newrelic.com/install/kubernetes/pixie/latest/p
     --set pixie-chart.deployKey=$PIXIE_DEPLOY_KEY \
     --set pixie-chart.clusterName=${kafka[name]}
 
+# Ingress Controller
+echo "Deploying Ingress Controller ..."
+
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx && \
+    helm repo update; \
+    helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx \
+        --namespace nginx --create-namespace \
+        --wait \
+        --debug \
+        --set controller.replicaCount=1 \
+        --set controller.nodeSelector."kubernetes\.io/os"="linux" \
+        --set controller.image.image="ingress-nginx/controller" \
+        --set controller.image.tag="v1.1.1" \
+        --set controller.image.digest="" \
+        --set controller.service.externalTrafficPolicy=Local \
+        --set controller.admissionWebhooks.patch.nodeSelector."kubernetes\.io/os"="linux" \
+        --set controller.admissionWebhooks.patch.image.image="ingress-nginx/kube-webhook-certgen" \
+        --set controller.admissionWebhooks.patch.image.tag="v1.1.1" \
+        --set controller.admissionWebhooks.patch.image.digest="" \
+        --set defaultBackend.nodeSelector."kubernetes\.io/os"="linux" \
+        --set defaultBackend.image.image="defaultbackend-amd64" \
+        --set defaultBackend.image.tag="1.5" \
+        --set defaultBackend.image.digest=""
+
 # Zookeeper
 echo "Deploying Zookeeper ..."
 
