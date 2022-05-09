@@ -87,7 +87,7 @@ kubectl apply -f https://download.newrelic.com/install/kubernetes/pixie/latest/p
     --set pixie-chart.clusterName=${kafka[name]}
 
 # Zookeeper
-Write-Host "Deploying Zookeeper ..."
+echo "Deploying Zookeeper ..."
 
 helm upgrade ${zookeeper[name]} \
     --install \
@@ -98,7 +98,7 @@ helm upgrade ${zookeeper[name]} \
     ../charts/zookeeper
 
 # Kafka
-Write-Host "Deploying Kafka ..."
+echo "Deploying Kafka ..."
 
 helm upgrade ${kafka[name]} \
     --install \
@@ -109,7 +109,7 @@ helm upgrade ${kafka[name]} \
     ../charts/kafka
 
 # Topic
-Write-Host "Checking topic [$topicName] ..."
+echo "Checking topic [$topicName] ..."
 
 mytopic=$(kubectl exec -n "${kafka[namespace]}" "${kafka[name]}-0" -it -- bash \
     /kafka/bin/kafka-topics.sh \
@@ -146,7 +146,7 @@ else
 fi
 
 # Producer
-Write-Host "Deploying Producer  ..."
+echo "Deploying Producer  ..."
 
 helm upgrade ${producer[name]} \
     --install \
@@ -157,7 +157,7 @@ helm upgrade ${producer[name]} \
     ../charts/producer
 
 # Consumer
-Write-Host "Deploying Consumer ..."
+echo "Deploying Consumer ..."
 
 helm upgrade ${consumer[name]} \
     --install \
