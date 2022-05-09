@@ -14,14 +14,14 @@ spec:
     spec:
       containers:
         - name: {{ .Values.name }}
-          image: "utr1903/{{ .Values.name }}"
+          image: "{{ .Values.dockerhubName }}/{{ .Values.name }}"
           ports:
             - protocol: TCP
               containerPort: {{ .Values.port }}
-          # resources:
-          #   requests:
-          #     cpu: 100m
-          #     memory: 100Mi
-          #   limits:
-          #     cpu: 200m
-          #     memory: 200Mi
+          resources:
+            requests:
+              cpu: 20m
+              memory: 50Mi
+            limits:
+              cpu: 100m
+              memory: 200Mi
