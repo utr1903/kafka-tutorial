@@ -68,3 +68,4 @@ fi
 az aks get-credentials \
     --resource-group $resourceGroupName \
     --name $aksName \
+    --overwrite-existing
