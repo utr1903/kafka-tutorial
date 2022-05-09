@@ -6,9 +6,6 @@
 
 ### Set variables
 
-# Docker
-dockerhubName="uturkarslan"
-
 # Zookeeper
 declare -A zookeeper
 zookeeper["name"]="zookeeper"
@@ -40,26 +37,26 @@ topicName="mytopic"
 
 # Zookeeper
 echo -e "\n--- ZOOKEEPER ---\n"
-docker build --tag "${dockerhubName}/${zookeeper[name]}" ../../apps/kafka/zookeeper/.
-docker push "${dockerhubName}/${zookeeper[name]}"
+docker build --tag "${DOCKERHUB_NAME}/${zookeeper[name]}" ../../apps/kafka/zookeeper/.
+docker push "${DOCKERHUB_NAME}/${zookeeper[name]}"
 echo -e "\n------\n"
 
 # Kafka
 echo -e "\n--- KAFKA ---\n"
-docker build --tag "${dockerhubName}/${kafka[name]}" ../../apps/kafka/kafka/.
-docker push "${dockerhubName}/${kafka[name]}"
+docker build --tag "${DOCKERHUB_NAME}/${kafka[name]}" ../../apps/kafka/kafka/.
+docker push "${DOCKERHUB_NAME}/${kafka[name]}"
 echo -e "\n------\n"
 
 # Producer
 echo -e "\n--- PRODUCER ---\n"
-docker build --tag "${dockerhubName}/${producer[name]}" ../../apps/producer/.
-docker push "${dockerhubName}/${producer[name]}"
+docker build --tag "${DOCKERHUB_NAME}/${producer[name]}" ../../apps/producer/.
+docker push "${DOCKERHUB_NAME}/${producer[name]}"
 echo -e "\n------\n"
 
 # Consumer
 echo -e "\n--- CONSUMER ---\n"
-docker build --tag "${dockerhubName}/${consumer[name]}" ../../apps/consumer/.
-docker push "${dockerhubName}/${consumer[name]}"
+docker build --tag "${DOCKERHUB_NAME}/${consumer[name]}" ../../apps/consumer/.
+docker push "${DOCKERHUB_NAME}/${consumer[name]}"
 echo -e "\n------\n"
 
 # Newrelic
@@ -95,6 +92,7 @@ helm upgrade ${zookeeper[name]} \
     --debug \
     --create-namespace \
     --namespace ${zookeeper[namespace]} \
+    --set dockerhubName=$DOCKERHUB_NAME \
     ../charts/zookeeper
 
 # Kafka
@@ -106,6 +104,7 @@ helm upgrade ${kafka[name]} \
     --debug \
     --create-namespace \
     --namespace ${kafka[namespace]} \
+    --set dockerhubName=$DOCKERHUB_NAME \
     ../charts/kafka
 
 # Topic
@@ -154,6 +153,7 @@ helm upgrade ${producer[name]} \
     --debug \
     --create-namespace \
     --namespace ${producer[namespace]} \
+    --set dockerhubName=$DOCKERHUB_NAME \
     ../charts/producer
 
 # Consumer
@@ -165,4 +165,5 @@ helm upgrade ${consumer[name]} \
     --debug \
     --create-namespace \
     --namespace ${consumer[namespace]} \
+    --set dockerhubName=$DOCKERHUB_NAME \
     ../charts/consumer
