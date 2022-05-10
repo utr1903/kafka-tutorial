@@ -30,6 +30,9 @@ consumer["name"]="consumer"
 consumer["namespace"]="cons"
 consumer["port"]=8080
 
+# Cluster
+clusterName="test"
+
 # Topic
 topicName="mytopic"
 
@@ -49,7 +52,11 @@ echo -e "\n------\n"
 
 # Producer
 echo -e "\n--- PRODUCER ---\n"
-docker build --tag "${DOCKERHUB_NAME}/${producer[name]}" ../../apps/producer/.
+docker build \
+    --build-arg newRelicAppName=${producer[name]} \
+    --build-arg newRelicLicenseKey=$NEWRELIC_LICENSE_KEY \
+    --tag "${DOCKERHUB_NAME}/${producer[name]}" \
+    ../../apps/producer/.
 docker push "${DOCKERHUB_NAME}/${producer[name]}"
 echo -e "\n------\n"
 
@@ -69,7 +76,7 @@ kubectl apply -f https://download.newrelic.com/install/kubernetes/pixie/latest/p
     --wait \
     --debug \
     --set global.licenseKey=$NEWRELIC_LICENSE_KEY \
-    --set global.cluster=${kafka[name]} \
+    --set global.cluster=$clusterName \
     --namespace=newrelic \
     --set newrelic-infrastructure.privileged=true \
     --set global.lowDataMode=true \
@@ -81,7 +88,7 @@ kubectl apply -f https://download.newrelic.com/install/kubernetes/pixie/latest/p
     --set newrelic-pixie.apiKey=$PIXIE_API_KEY \
     --set pixie-chart.enabled=true \
     --set pixie-chart.deployKey=$PIXIE_DEPLOY_KEY \
-    --set pixie-chart.clusterName=${kafka[name]}
+    --set pixie-chart.clusterName=$clusterName
 
 # Ingress Controller
 echo "Deploying Ingress Controller ..."
