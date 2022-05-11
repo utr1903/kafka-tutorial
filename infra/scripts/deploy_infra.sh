@@ -11,9 +11,12 @@ locationShort="euw"
 project="kafka"
 stageLong="dev"
 stageShort="d"
-instance="001"
+instance="002"
 
 kubernetesVersion="1.23.5"
+kubernetesMasterNodeCount="1"
+kubernetesMasterNodeCountMin="1"
+kubernetesMasterNodeCountMax="3"
 
 ### Variables
 resourceGroupName="rg-$program-$locationShort-$project-$stageShort-$instance"
@@ -58,7 +61,10 @@ if [[ $aks == "" ]]; then
         --name $aksName \
         --location $locationLong \
         --kubernetes-version $kubernetesVersion \
-        --node-count 1 \
+        --enable-cluster-autoscaler \
+        --node-count $kubernetesMasterNodeCount \
+        --min-count $kubernetesMasterNodeCountMin \
+        --max-count $kubernetesMasterNodeCountMax \
         --generate-ssh-keys \
         2> /dev/null \
         | jq)

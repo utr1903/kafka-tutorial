@@ -8,7 +8,7 @@ spec:
     matchLabels:
       app: {{ .Values.name }}
   serviceName: {{ .Values.name }}
-  replicas: 3
+  replicas: 1
   updateStrategy:
     type: RollingUpdate
   podManagementPolicy: Parallel
@@ -33,11 +33,11 @@ spec:
               containerPort: {{ .Values.clientPort }}
           resources:
             requests:
-              cpu: 100m
-              memory: 100Mi
+              cpu: 200m
+              memory: 1Gi
             limits:
-              cpu: 300m
-              memory: 600Mi
+              cpu: 500m
+              memory: 3Gi
           readinessProbe:
             tcpSocket:
               port: {{ .Values.clientPort }}
