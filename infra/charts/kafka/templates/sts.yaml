@@ -33,11 +33,11 @@ spec:
               containerPort: {{ .Values.clientPort }}
           resources:
             requests:
-              cpu: 50m
-              memory: 100Mi
-            limits:
               cpu: 200m
-              memory: 400Mi
+              memory: 1Gi
+            limits:
+              cpu: 500m
+              memory: 3Gi
           readinessProbe:
             tcpSocket:
               port: {{ .Values.clientPort }}
