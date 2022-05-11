@@ -71,7 +71,11 @@ echo -e "\n------\n"
 
 # Consumer
 echo -e "\n--- CONSUMER ---\n"
-docker build --tag "${DOCKERHUB_NAME}/${consumer[name]}" ../../apps/consumer/.
+docker build \
+    --build-arg newRelicAppName=${consumer[name]} \
+    --build-arg newRelicLicenseKey=$NEWRELIC_LICENSE_KEY \
+    --tag "${DOCKERHUB_NAME}/${consumer[name]}" \
+    ../../apps/consumer/.
 docker push "${DOCKERHUB_NAME}/${consumer[name]}"
 echo -e "\n------\n"
 
