@@ -32,10 +32,12 @@ public class NewRelicTracer {
         // Iterate through each record header and insert the trace headers into the headers map
         for (var header : record.headers()) {
             String headerValue = new String(header.value(), StandardCharsets.UTF_8);
+            logger.info("Header key  : " + header.key());
+            logger.info("Header value: " + headerValue);
 
             // using the newrelic key
-            if (header.key().equals("newrelic"))
-                headers.addHeader("newrelic", headerValue);
+            // if (header.key().equals("newrelic"))
+            //  headers.addHeader("newrelic", headerValue);
 
             // or using the W3C keys
             if (header.key().equals("traceparent"))
