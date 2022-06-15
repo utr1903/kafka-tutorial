@@ -1,28 +1,17 @@
 package com.kafka.tutorial.producer.service.kafka;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class PublishModel {
 
     private String topic;
     private int partition;
     private long timestamp;
-
-    public void setTopic(String topic) {
-        this.topic = topic;
-    }
-
-    public String getTopic() { return topic; }
-
-    public void setPartition(int partition) { this.partition = partition; }
-
-    public int getPartition() {
-        return partition;
-    }
-
-    public void setTimestamp(long timestamp) {
-        this.timestamp = timestamp;
-    }
-
-    public long getTimestamp() {
-        return timestamp;
-    }
 }
