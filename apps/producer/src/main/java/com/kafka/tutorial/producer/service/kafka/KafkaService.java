@@ -2,12 +2,10 @@ package com.kafka.tutorial.producer.service.kafka;
 
 import com.kafka.tutorial.producer.dtos.KafkaRequestDto;
 import com.kafka.tutorial.producer.dtos.KafkaResponseDto;
-import com.newrelic.telemetry.SpanBatchSenderFactory;
-import com.newrelic.telemetry.spans.SpanBatchSender;
+import com.newrelic.api.agent.NewRelic;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.common.header.Headers;
 import org.apache.kafka.common.header.internals.RecordHeader;
 import org.apache.kafka.common.header.internals.RecordHeaders;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -34,19 +32,18 @@ public class KafkaService {
         KafkaRequestDto requestDto
     )
     {
-        KafkaResponseDto responseDto = new KafkaResponseDto();
+        var traceId = NewRelic.getAgent().getTraceMetadata().getTraceId();
 
-        Headers headers = new RecordHeaders();
-        headers.add(new RecordHeader("myHeader", "myHeader".getBytes()));
+        var headers = new RecordHeaders();
+        headers.add(new RecordHeader("traceId", traceId.getBytes()));
 
-        ProducerRecord<String, String> record =
-                new ProducerRecord<>(
-                    requestDto.getTopic(),
-                    null,
-                    "key",
-                    requestDto.getValue(),
-                    headers
-                );
+        var record = new ProducerRecord<>(
+            requestDto.getTopic(),
+            null,
+            "value",
+            requestDto.getValue(),
+            headers
+        );
 
         for (var header : record.headers()) {
             String value = new String(header.value());
@@ -54,15 +51,9 @@ public class KafkaService {
             logger.info("Header value: " + value);
         }
 
-//        SpanBatchSender sender =
-//                SpanBatchSender.create(
-//                        SpanBatchSenderFactory.fromHttpImplementation(OkHttpPoster::new)
-//                                .configureWith(licenseKey)
-//                                .useLicenseKey(true)
-//                                .auditLoggingEnabled(true)
-//                                .build());
+        var model = new PublishModel();
 
-        PublishModel model = new PublishModel();
+        var responseDto = new KafkaResponseDto();
 
         producer.send(record, (recordMetadata, e) -> {
             model.setTopic(requestDto.getTopic());
